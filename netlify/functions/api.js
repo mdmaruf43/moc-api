@@ -85,15 +85,37 @@ const ordersData = [
     },
 ];
 
+// --- NEW ROUTE: Get All Orders ---
+router.get('/orders', (req, res) => {
+    res.json({
+        status: 'success',
+        count: ordersData.length,
+        data: ordersData,
+    });
+});
+
+// --- NEW ROUTE: Get All LinkPoints ---
+router.get('/linkpoints', (req, res) => {
+    res.json({
+        status: 'success',
+        count: linkPointsData.length,
+        data: linkPointsData,
+    });
+});
+
 // Simplified Routes
 router.get('/orders/:id', (req, res) => {
-  const order = ordersData.find(o => o.orderId === req.params.id);
-  order ? res.json({ status: "success", data: order }) : res.status(404).json({ error: "Order not found" });
+    const order = ordersData.find((o) => o.orderId === req.params.id);
+    order
+        ? res.json({ status: 'success', data: order })
+        : res.status(404).json({ error: 'Order not found' });
 });
 
 router.get('/linkpoints/:id', (req, res) => {
-  const user = linkPointsData.find(u => u.userId === req.params.id);
-  user ? res.json({ status: "success", data: user }) : res.status(404).json({ error: "User not found" });
+    const user = linkPointsData.find((u) => u.userId === req.params.id);
+    user
+        ? res.json({ status: 'success', data: user })
+        : res.status(404).json({ error: 'User not found' });
 });
 
 app.use('/api/', router); // This handles the redirected path
