@@ -85,22 +85,18 @@ const ordersData = [
     },
 ];
 
-// Routes
-router.get('/linkpoints/:id', (req, res) => {
-    const user = linkPointsData.find((u) => u.userId === req.params.id);
-    user
-        ? res.json({ status: 'success', data: user })
-        : res.status(404).json({ error: 'Not found' });
-});
-
+// Simplified Routes
 router.get('/orders/:id', (req, res) => {
-    const order = ordersData.find((o) => o.orderId === req.params.id);
-    order
-        ? res.json({ status: 'success', data: order })
-        : res.status(404).json({ error: 'Not found' });
+  const order = ordersData.find(o => o.orderId === req.params.id);
+  order ? res.json({ status: "success", data: order }) : res.status(404).json({ error: "Order not found" });
 });
 
-// Netlify path prefix
-app.use('/.netlify/functions/api', router);
+router.get('/linkpoints/:id', (req, res) => {
+  const user = linkPointsData.find(u => u.userId === req.params.id);
+  user ? res.json({ status: "success", data: user }) : res.status(404).json({ error: "User not found" });
+});
+
+app.use('/api/', router); // This handles the redirected path
+app.use('/.netlify/functions/api/', router); // This handles the direct path
 
 module.exports.handler = serverless(app);
