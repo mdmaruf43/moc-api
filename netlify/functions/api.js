@@ -4,84 +4,80 @@ const app = express();
 const router = express.Router();
 
 // Mock Data
+// --- UPDATED MOCK DATA WITH PHONE NUMBERS ---
 const linkPointsData = [
     {
         userId: 'U12345',
+        phone: '91112222',
         memberTier: 'PLUS',
         totalPoints: 2850,
         availablePoints: 2200,
-        pendingPoints: 650,
-        pointsExpiry: '2026-12-31',
     },
     {
         userId: 'U12346',
+        phone: '92223333',
         memberTier: 'SILVER',
         totalPoints: 850,
         availablePoints: 850,
-        pendingPoints: 0,
-        pointsExpiry: '2026-09-15',
     },
     {
         userId: 'U12347',
+        phone: '93334444',
         memberTier: 'GOLD',
         totalPoints: 12400,
         availablePoints: 11000,
-        pendingPoints: 1400,
-        pointsExpiry: '2027-01-20',
     },
     {
         userId: 'U12348',
+        phone: '94445555',
         memberTier: 'PLATINUM',
         totalPoints: 45200,
         availablePoints: 45000,
-        pendingPoints: 200,
-        pointsExpiry: '2026-11-30',
     },
     {
         userId: 'U12349',
+        phone: '95556666',
         memberTier: 'BASIC',
         totalPoints: 50,
         availablePoints: 50,
-        pendingPoints: 0,
-        pointsExpiry: '2026-05-10',
     },
 ];
 
 const ordersData = [
     {
         orderId: 'ORD10001',
+        phone: '91112222',
         status: 'Out for Delivery',
         friendlyStatus: 'Your order is on the way!',
         estimatedDelivery: '2026-04-22T18:00:00Z',
-        courier: 'NTUC Logistics',
     },
     {
         orderId: 'ORD10002',
+        phone: '92223333',
         status: 'Processing',
         friendlyStatus: 'We are preparing your items.',
         estimatedDelivery: '2026-04-24T12:00:00Z',
-        courier: 'Pending',
     },
     {
         orderId: 'ORD10003',
+        phone: '93334444',
         status: 'Shipped',
         friendlyStatus: 'Your package has left our warehouse.',
         estimatedDelivery: '2026-04-23T14:30:00Z',
-        courier: 'NinjaVan',
     },
     {
         orderId: 'ORD10004',
+        phone: '94445555',
         status: 'Delivered',
         friendlyStatus: 'Your order was dropped off at your doorstep.',
         estimatedDelivery: '2026-04-21T10:15:00Z',
-        courier: 'GrabExpress',
     },
     {
         orderId: 'ORD10005',
+        phone: '91112222',
         status: 'Cancelled',
         friendlyStatus: 'This order has been cancelled.',
         estimatedDelivery: 'N/A',
-        courier: 'N/A',
     },
 ];
 
@@ -103,19 +99,35 @@ router.get('/linkpoints', (req, res) => {
     });
 });
 
-// Simplified Routes
-router.get('/orders/:id', (req, res) => {
-    const order = ordersData.find((o) => o.orderId === req.params.id);
-    order
-        ? res.json({ status: 'success', data: order })
-        : res.status(404).json({ error: 'Order not found' });
+// GET Orders (Search by orderId OR phoneNumber)
+router.get('/orders/:identifier', (req, res) => {
+    const id = req.params.identifier;
+    // Search for matching ID OR matching Phone
+    const order = ordersData.find((o) => o.orderId === id || o.phone === id);
+
+    if (order) {
+        res.json({ status: 'success', data: order });
+    } else {
+        res.status(404).json({
+            status: 'error',
+            message: 'No order found for this identifier.',
+        });
+    }
 });
 
-router.get('/linkpoints/:id', (req, res) => {
-    const user = linkPointsData.find((u) => u.userId === req.params.id);
-    user
-        ? res.json({ status: 'success', data: user })
-        : res.status(404).json({ error: 'User not found' });
+// GET LinkPoints (Search by userId OR phoneNumber)
+router.get('/linkpoints/:identifier', (req, res) => {
+    const id = req.params.identifier;
+    const user = linkPointsData.find((u) => u.userId === id || u.phone === id);
+
+    if (user) {
+        res.json({ status: 'success', data: user });
+    } else {
+        res.status(404).json({
+            status: 'error',
+            message: 'No user record found.',
+        });
+    }
 });
 
 app.use('/api/', router); // This handles the redirected path
